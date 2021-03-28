@@ -9,7 +9,7 @@
 #include <sys/shm.h>
 #include <wait.h>
 
-#define PERM S_IRUSR S_IWUSR
+#define PERM S_IRUSR | S_IWUSR
 #define MAX_SEQUENCE 10
 
 typedef struct Shared_data{
@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     shared_data store;      //暂时存储share_data
     store.sequence_size = atof(argv[1]);
 
-    if ((shmid = shmget(IPC_PRIVATE, 1024, PREM)) == -1) {  //分配内存共享区
+
+	if ((shmid = shmget(IPC_PRIVATE, 1024, PERM)) == -1) {  //分配内存共享区
         fprintf(stderr, "Create share momery error:%s\n", strerror(errno));
         exit(1);
     }
@@ -44,15 +45,16 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < MAX_SEQUENCE; i++) {
         p_address->fib_sequence[i] = store.fib_sequence[i];
-    }
+    
+	}
     p_address->sequence_size = store.sequence_size;
 
     pid = fork();       //创建子进程
     if (pid > 0) {      //父进程
         wait(NULL);
         for (int i = 0; i < p_address->sequence_size; i++) {
-            printf("%ld", (p_address->fib_sequence[i]));
-        }
+            printf("%ld ", (p_address->fib_sequence[i]));
+		}
 
         exit(0);
     } else if (pid == 0) {      //子进程
@@ -64,6 +66,8 @@ int main(int argc, char *argv[])
         }
 
         exit(0);
-    }
+    
+
+	}
     return 0;
 }
