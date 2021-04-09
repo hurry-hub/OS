@@ -37,7 +37,7 @@ void handle_SIGINT()          //处理中断
     return;
 }
 
-int setup(char input[], char *argv[], int *background)
+int setup(char input[], char *args[], int *background)
 {
     int len, i, start, ct;
     //len表示命令的长度，i代表命令的个数，start代表命令的开始顺序，ct代表下一指令的位置
@@ -68,7 +68,7 @@ int setup(char input[], char *argv[], int *background)
                 write(STDOUT_FILENO, NF, strlen(NF));
                 return 0;
             } else {
-                write(STDOUT_FILENO, buffer[j].com, strlen(buffer[j].cmd));
+                write(STDOUT_FILENO, buffer[j].cmd, strlen(buffer[j].cmd));
                 strcpy(input, buffer[j].cmd);
                 len = strlen(input);
             }
@@ -109,7 +109,7 @@ int setup(char input[], char *argv[], int *background)
             }
         }
     }
-    agrs[ct] = NULL;
+    args[ct] = NULL;
     return 1;
 }
 
